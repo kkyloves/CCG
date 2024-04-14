@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a13c366ef8819df44a68aa8f24b71b22, type: 3}
+  m_Name: Test Card Ariana
+  m_EditorClassIdentifier: 
+  cardId: m_arianna
+  cardSprite: {fileID: 21300000, guid: c69bb9fc1d4421a44a715822e02993ed, type: 3}
+  cardType: 1
+  energyType: 2
+  energyNeeded:
+  - energyNeededType: 2
+    energyNeededAmount: 1
+  cardTextDetails:
+    cardName: Test Card Arianna
+    cardNickname: A test card
+    cardDescription: This is a test card.
+  attackAmount: 1
+  defAmount: 1

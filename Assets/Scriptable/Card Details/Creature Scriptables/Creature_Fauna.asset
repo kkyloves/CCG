@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a13c366ef8819df44a68aa8f24b71b22, type: 3}
+  m_Name: Creature_Fauna
+  m_EditorClassIdentifier: 
+  cardId: fauna
+  cardSprite: {fileID: 21300000, guid: 3d8d9f126e520ba4085eeac2be68616e, type: 3}
+  cardType: 1
+  energyType: 4
+  energyNeeded:
+  - energyNeededType: 0
+    energyNeededAmount: 1
+  cardTextDetails:
+    cardName: Fauna
+    cardNickname: Fauna Green
+    cardDescription: This is Fauna Green.
+  attackAmount: 4
+  defAmount: 1

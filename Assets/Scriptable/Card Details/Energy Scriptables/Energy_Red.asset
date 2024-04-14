@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a13c366ef8819df44a68aa8f24b71b22, type: 3}
+  m_Name: Energy_Red
+  m_EditorClassIdentifier: 
+  cardId: red
+  cardSprite: {fileID: 21300000, guid: a2aa5441ae986d8498c7b8b1a53d7beb, type: 3}
+  cardType: 0
+  energyType: 2
+  energyNeeded: []
+  cardTextDetails:
+    cardName: Cosmic Blood Forge
+    cardNickname: Basic - Domain Red
+    cardDescription: 
+  attackAmount: 0
+  defAmount: 0
