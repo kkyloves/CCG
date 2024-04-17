@@ -30,12 +30,12 @@ public class DiscardCardItem : MonoBehaviour
         discardButton.onClick.AddListener(DiscardToVoid);
     }
 
-    public void InitDiscardCard(CardDetails handCardDetails, HandCardManager handHandCard, CardItem discardTempCard)
+    public void InitDiscardCard(CardDetails handCardDetails, HandCardManager handCard, CardItem discardTempCard)
     {
         this.discardTempCard = discardTempCard;
         
-        cardDetails = handHandCard.CardDetails;
-        handHandCard.gameObject.SetActive(false);
+        cardDetails = handCard.CardDetails;
+        handCard.gameObject.SetActive(false);
         
         // discardTempCard.sprite = handCardDetails;
         // discardCardImage.sprite = handCardDetails;
@@ -44,7 +44,7 @@ public class DiscardCardItem : MonoBehaviour
         cardItem.Init(handCardDetails);
 
         discardTempCard.transform.DOScale(new Vector2(1f, 1f), 0f);
-        discardTempCard.transform.DOMove(handHandCard.HandPosition.position, 0f);
+        discardTempCard.transform.DOMove(handCard.HandPosition.position, 0f);
 
         cardItem.CanvasGroup.DOFade(0f, 0f);
         discardTempCard.CanvasGroup.DOFade(1f, 0f);

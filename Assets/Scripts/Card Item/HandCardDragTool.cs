@@ -1,12 +1,15 @@
-using Script.Misc;
+using DG.Tweening;
 using Scriptable;
+using UI;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace HandCard_Item
 {
-    public class HandCardDragTool : Singleton<HandCardDragTool>
+    public class HandCardDragTool : Script.Misc.Singleton<HandCardDragTool>
     {
         private CardItem cardItem;
+        public CardItem CardItem => cardItem;
         
         private void Awake()
         {
@@ -18,6 +21,7 @@ namespace HandCard_Item
 
         public void InitCard(CardDetails cardDetails)
         {
+            transform.DOScale(new Vector3(1f, 1f, 1f), 0f);
             cardItem.Init(cardDetails);
             gameObject.SetActive(true);
         }

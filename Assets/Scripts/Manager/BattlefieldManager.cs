@@ -19,7 +19,7 @@ public class BattlefieldManager : Singleton<BattlefieldManager>
 
     public BattleCardManager[] EnemyBattleCards => enemyBattleCards;
     
-    private void Awake()
+    private void Start()
     {
         for (var i = 0; i < tempEnemyCardDetails.Length; i++)
         {
@@ -77,18 +77,22 @@ public class BattlefieldManager : Singleton<BattlefieldManager>
         }
     }
 
-    public BattleCardManager GetNearestOpenEnergySpotCard(Vector2 position)
+    public BattleCardManager GetNearestOpenEnergySpotCard(Vector3 position)
     {
         var nearestCard = GetOpenSpotEnergyCard();
-        var nearestDistance = Vector2.Distance(nearestCard.transform.position, position);
+        position.z = nearestCard.transform.position.z;
 
+        var nearestDistance = Vector2.Distance(nearestCard.transform.position, position);
+        
         if (position.y < 700f)
         {
+            //foreach (var card in playerEnergyCards)
             foreach (var card in playerEnergyCards)
             {
                 if (!card.IsSlotted)
                 {
-                    var distance = Vector2.Distance(card.transform.position, position);
+                    var distance = Vector3.Distance(card.transform.position, position);
+
                     if (distance < nearestDistance)
                     {
                         nearestCard = card;

@@ -26,7 +26,7 @@ public class CardDrawAnimationTool : Singleton<CardDrawAnimationTool>
             }
         }.AddComponent<Image>();
 
-        cardImage.transform.parent = transform.GetChild(0).transform;
+        cardImage.transform.parent = transform.GetChild(1).transform;
         
         var objRectTransform = cardImage.GetComponent<RectTransform>();
         objRectTransform.sizeDelta = cardItem.BackgroundTransform.GetComponent<RectTransform>().sizeDelta;
@@ -85,6 +85,8 @@ public class CardDrawAnimationTool : Singleton<CardDrawAnimationTool>
         transform.DOScale(new Vector2(1f, 1f), 0.5f);
         transform.DOMove(finalHandPosition.HandPosition.position, 0.5f).OnComplete(() =>
         {
+            CardDrawManager.Instance.SetDrawingCard(false);
+            
             finalHandPosition.gameObject.SetActive(true);
             gameObject.SetActive(false);
         });

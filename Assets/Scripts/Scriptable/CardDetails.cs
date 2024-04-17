@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Scriptable
@@ -23,6 +24,19 @@ namespace Scriptable
         
         public int AttackAmount => attackAmount;
         public int DefAmount => defAmount;
+
+        public bool DoesRequireEnergyType(EnergyType energy)
+        {
+            foreach (var need in energyNeeded)
+            {
+                if (need.EnergyNeededType.Equals(energy))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     [System.Serializable]

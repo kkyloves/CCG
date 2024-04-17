@@ -23,7 +23,7 @@ namespace UI
             hpText.text = totalHp.ToString();
 
             targetButton.onClick.AddListener(OnClickTarget);
-            targetButton.gameObject.SetActive(false);
+            //targetButton.gameObject.SetActive(false);
         }
 
         private void OnClickTarget()

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using HandCard_Item;
 using Manager;
@@ -20,6 +21,9 @@ public class CardDrawManager : Script.Misc.Singleton<CardDrawManager>
     public Transform CardDisplayPosition => cardDisplayPosition;
     public Transform CardDisplayIdlePosition => cardDisplayIdlePosition;
 
+    public bool isDrawingCards;
+    public bool IsDrawingCards => isDrawingCards;
+    
     private CardDetails GetRandomCardInDeck()
     {
         if (cardDeck.Count > 0)
@@ -33,24 +37,40 @@ public class CardDrawManager : Script.Misc.Singleton<CardDrawManager>
 
         return null;
     }
+    
+    public void FirstDrawCard()
+    {
+        StartCoroutine(DrawCardDelay(1f));
+    }
+    
+    private IEnumerator DrawCardDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        DrawCard();
+    }
 
     public void DrawCard()
     {
         CardHandDragController.Instance.MoveHandCardListDown();
         CardHandManager.Instance.ResetHandCardsPosition();
-        
+
         var card = GetRandomCardInDeck();
-        
+
         if (card != null)
         {
             var cardHandSlot = CardHandManager.Instance.GetOpenSlotHandCard();
             if (cardHandSlot != null)
             {
                 var index = cardHandSlot.GetIndex();
-                cardHandSlot.InitHandCard(card, index);
+                cardHandSlot.InitHandCard(card, index, false);
                 CardDrawAnimationTool.Instance.InitDrawCard(card, cardHandSlot);
             }
         }
+    }
+    
+    public void SetDrawingCard(bool isDrawingCards)
+    {
+        this.isDrawingCards = isDrawingCards;
     }
 
     public List<CardDetails> DrawInitHandCards()

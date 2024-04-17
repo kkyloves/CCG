@@ -31,14 +31,19 @@ public class DiscardVoidController : Singleton<DiscardVoidController>
         cardItem.CanvasGroup.DOFade(1f, 0.5f);
         cardItem.transform.DOScale(1.5f, 0.5f).OnComplete(() =>
         {
-            StartCoroutine(Discard());
+            StartCoroutine(Discard(cardDetails));
         });
     }
 
-    private IEnumerator Discard()
+    private IEnumerator Discard(CardDetails cardDetails)
     {
         yield return new WaitForSeconds(1f);
-        PlayerDataManager.Instance.AddEnergyValue(EnergyType.Void, 1);
+
+        if (cardDetails.DoesRequireEnergyType(EnergyType.Void))
+        {
+            PlayerDataManager.Instance.AddEnergyValue(EnergyType.Void, 1);
+        }
+
         cardItem.transform.DOScale(0f, 0.5f).OnComplete(() =>
         {
             callback?.Invoke();

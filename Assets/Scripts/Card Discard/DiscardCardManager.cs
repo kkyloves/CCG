@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class DiscardCardManager : Singleton<DiscardCardManager>
 {
+    private const int MAX_NUMBER_OF_HAND_CARDS_TO_CONTINUE = 7;
+
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private CanvasGroup[] uiToHide;
 
@@ -18,6 +20,9 @@ public class DiscardCardManager : Singleton<DiscardCardManager>
     [SerializeField] private Transform discardParent;
     [SerializeField] private Transform discardTempParent;
 
+    [SerializeField] private HorizontalLayoutGroup horizontalLayoutGroup;
+    [SerializeField] private Image blackBG;
+
     private void Awake()
     {
         canvasGroup.DOFade(0f, 0f);
@@ -26,8 +31,26 @@ public class DiscardCardManager : Singleton<DiscardCardManager>
         discardParent.gameObject.SetActive(false);
     }
 
+    public bool CanNextPhase()
+    {
+        var activeCounter = 0;
+        foreach (Transform child in discardParent)
+        {
+            if (child.gameObject.activeInHierarchy)
+            {
+                activeCounter++;
+            }
+        }
+
+        return activeCounter <= MAX_NUMBER_OF_HAND_CARDS_TO_CONTINUE;
+    }
+
     public void InitDiscardCards()
     {
+        horizontalLayoutGroup.enabled = false;
+        blackBG.gameObject.SetActive(true);
+        blackBG.DOFade(0.5f, 0.3f);
+        
         foreach (Transform child in discardParent)
         {
             child.gameObject.SetActive(false);
@@ -62,6 +85,8 @@ public class DiscardCardManager : Singleton<DiscardCardManager>
                 discardItem.DiscardCardItem.InitDiscardCard(listOfHand[i].HandCardManager.CardDetails, cardItemManager.HandCardManager, discardTempCards[i]);
             }
         }
+
+        horizontalLayoutGroup.enabled = true;
     }
 
     public void RemoveDiscardCard(DiscardCardItem card)
@@ -89,10 +114,15 @@ public class DiscardCardManager : Singleton<DiscardCardManager>
                 card.DiscardCardItem.MoveToHand(CardHandManager.Instance.ListOfHandsCardsPool[i].HandCardManager);
             }
         }
-
+        
+        blackBG.DOFade(0f, 0.5f).OnComplete(() =>
+        {
+            blackBG.gameObject.SetActive(false);
+        });
         StartCoroutine(DrawCards());
     }
 
+    
     private IEnumerator DrawCards()
     {
         yield return new WaitForSeconds(1f);

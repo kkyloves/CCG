@@ -24,4 +24,4 @@ MonoBehaviour:
     cardNickname: This is Blue Jeuta.
     cardDescription: I am Jeuta
   attackAmount: 4
-  defAmount: 1
+  defAmount: 8

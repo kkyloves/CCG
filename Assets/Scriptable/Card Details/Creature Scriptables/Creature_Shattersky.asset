@@ -26,4 +26,4 @@ MonoBehaviour:
     cardNickname: I am Shattersky
     cardDescription: This is a Blue Card
   attackAmount: 4
-  defAmount: 1
+  defAmount: 8

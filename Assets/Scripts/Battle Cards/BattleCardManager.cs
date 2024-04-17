@@ -18,7 +18,7 @@ namespace Battle_Cards
         private BattleCardDisplayController battleCardDisplayController;
         public BattleCardDisplayController BattleCardDisplayController => battleCardDisplayController;
 
-        private bool isSlotted;
+        public bool isSlotted;
         public bool IsSlotted => isSlotted;
         public CardItem CardItem => battleCardItem;
         public Button TargetButton => targetButton;
@@ -32,7 +32,14 @@ namespace Battle_Cards
             isSlotted = true;
 
             battleCardItem.Init(cardDetails);
-            battleCardItem.CanvasGroup.DOFade(1f, 0.3f);
+            
+            //reset previous stats
+            battleCardItem.CanvasGroup.DOFade(1f, 0f);
+            battleCardItem.DisableEffect.DOFade(0f, 0f);
+            battleCardItem.CardGlow.DOFade(0f, 0f);
+            battleCardItem.RedHurtEffect.DOFade(0f, 0f);
+            transform.DORotate(new Vector3(10f, 0f, 0f), 0f);
+            //attackButton.gameObject.SetActive(true);
         }
 
         private void Awake()
@@ -63,12 +70,12 @@ namespace Battle_Cards
             {
                 var attackerBattleCardManager = BattlefieldManager.Instance.ActiveBattleCardManager;
                 var attackerBattleCardItem = attackerBattleCardManager.CardItem;
-                
+
                 BattlefieldManager.Instance.RemoveActiveAttackBattleCard();
                 BattlefieldManager.Instance.SetTargetButtons(null, false);
 
                 var differenceIndex = attackerBattleCardManager.BattlefieldIndex - battlefieldIndex;
-                attackerBattleCardItem.transform.DORotate(new Vector3(0f, 0f, 15f * differenceIndex), 0.1f);
+                attackerBattleCardItem.transform.DORotate(new Vector3(10f, 0f, 15f * differenceIndex), 0.1f);
 
                 var duration = Mathf.Abs(differenceIndex) switch
                 {
@@ -79,37 +86,53 @@ namespace Battle_Cards
 
                 attackerBattleCardItem.transform.DOMove(downTarget.position, duration).OnComplete(() =>
                 {
-                    transform.DORotate(new Vector3(0f, 0f, -20f), 0.1f);
-                    
-                    attackerBattleCardItem.transform.DORotate(new Vector3(0f, 0f, 0f), duration);
+                    transform.DORotate(new Vector3(10f, 0f, -20f), 0.1f);
+
+                    attackerBattleCardItem.transform.DORotate(new Vector3(10f, 0f, 0f), duration);
+
+                    //apply red hurt effect
                     battleCardItem.RedHurtEffect.DOFade(0.6f, 0.1f);
+                    attackerBattleCardItem.RedHurtEffect.DOFade(0.6f, 0.1f);
 
                     attackerBattleCardItem.transform.DOMove(attackerBattleCardManager.transform.position, duration).OnComplete(() =>
                     {
-                        var attackDamage = attackerBattleCardItem.StatsCounter.AttackCount;
-                        var isDead = battleCardItem.UpdateDefStats(attackDamage);
+                        var attackerDamage = attackerBattleCardItem.StatsCounter.AttackCount;
+                        var targetEnemyDamage = battleCardItem.StatsCounter.AttackCount;
 
-                        if (isDead)
+                        var isTargetEnemyDead = battleCardItem.UpdateDefStats(attackerDamage);
+                        var isAttackerDead = attackerBattleCardItem.UpdateDefStats(targetEnemyDamage);
+
+                        if (isTargetEnemyDead)
                         {
-                            battleCardItem.CanvasGroup.DOFade(0f, 0.5f);
-                            
-                            isSlotted = false;
-                            battleCardItem = null;
-                            targetButton.gameObject.SetActive(false);
+                            SetDead();
 
                             if (BattlefieldManager.Instance.IsEnemyBattleFieldOpen())
                             {
                                 EnemyTargetController.Instance.TargetButton.gameObject.SetActive(true);
                             }
                         }
-                        else
+
+                        if (isAttackerDead)
                         {
-                            transform.DORotate(new Vector3(0f, 0f, 0f), 0.1f);
-                            battleCardItem.RedHurtEffect.DOFade(0f, 0.1f);
+                            attackerBattleCardManager.SetDead();
                         }
+
+
+                        transform.DORotate(new Vector3(10f, 0f, 0f), 0.1f);
+
+                        attackerBattleCardItem.RedHurtEffect.DOFade(0f, 0.1f);
+                        battleCardItem.RedHurtEffect.DOFade(0f, 0.1f);
                     });
                 });
             }
+        }
+
+        private void SetDead()
+        {
+            battleCardItem.CanvasGroup.DOFade(0f, 0.5f);
+
+            isSlotted = false;
+            targetButton.gameObject.SetActive(false);
         }
 
         private void OnClickAttack()

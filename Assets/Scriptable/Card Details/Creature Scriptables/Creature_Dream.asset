@@ -26,4 +26,4 @@ MonoBehaviour:
     cardNickname: Dream Blue
     cardDescription: This Dream Blue Card.
   attackAmount: 4
-  defAmount: 1
+  defAmount: 8

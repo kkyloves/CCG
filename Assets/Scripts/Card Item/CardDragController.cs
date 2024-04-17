@@ -1,6 +1,8 @@
+using Battle_Cards;
 using DG.Tweening;
 using Manager;
 using Scriptable;
+using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,7 +13,7 @@ namespace HandCard_Item
     {
         private CardDetails cardDetails;
         private CardDetails cardDetailsToDisplay;
-        
+
         private int handIndex;
         public int HandIndex => handIndex;
 
@@ -21,8 +23,13 @@ namespace HandCard_Item
         private bool isDraggingDown;
         private bool isDragCardSetup;
 
+        private BattleCardManager battleCardToDrop;
+
+        public HandCardManager handCardManager;
+
         public void Init(HandCardManager handCardManager)
         {
+            this.handCardManager = handCardManager;
             cardDetails = handCardManager.CardDetails;
         }
 
@@ -64,7 +71,7 @@ namespace HandCard_Item
             HandCardDragTool.Instance.DragPosition(dragPosition);
             BattlefieldManager.Instance.ShowPlayerBattleField();
 
-            GetComponent<Image>().DOFade(0.5f, 0.3f);
+            GetComponent<CanvasGroup>().DOFade(0.5f, 0.3f);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -86,29 +93,61 @@ namespace HandCard_Item
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (CardHandManager.Instance.IsDraggingCards)
+            {
+                BattlefieldManager.Instance.HidePlayerBattleField();
+                GetComponent<CanvasGroup>().DOFade(1f, 0.3f);
+
+                CardHandManager.Instance.SetIsDraggingCard(false);
+                return;
+            }
+
+            
             if (!CardHandDragController.Instance.IsDragging && isDragCardSetup)
             {
-                HandCardDragTool.Instance.EndDrag();
-
-                if (cardDetailsToDisplay.CardType == CardType.Creature)
+                if (handCardManager.IsDisabled == false)
                 {
-                    var canPlace = PlayerDataManager.Instance.CanPlaceMinionCard(cardDetailsToDisplay.EnergyNeeded);
+                    var renderCamera = CanvasCameraController.Instance.CanvasCamera.worldCamera;
+                    var screenPos = Input.mousePosition;
+                    screenPos.z = 100f;
+                    var canvasPos = renderCamera.ScreenToWorldPoint(screenPos);
 
-                    if (canPlace)
+
+                    if (cardDetailsToDisplay.CardType == CardType.Creature)
                     {
-                        CardChosenDisplayController.Instance.DisplayCardChosen(cardDetailsToDisplay, AfterDisplayCallback);
-                        BattlefieldManager.Instance.ShowPlayerBattleField();
+                        var canPlace = PlayerDataManager.Instance.CanPlaceCreatureCard(cardDetailsToDisplay.EnergyNeeded);
+
+
+                        if (canPlace)
+                        {
+                            CardHandManager.Instance.SetIsDraggingCard(true);
+
+                            battleCardToDrop = BattlefieldManager.Instance.GetNearestOpenCreatureSpotCard(canvasPos);
+
+                            CardChosenDisplayController.Instance.DisplayCardChosen(cardDetailsToDisplay, battleCardToDrop.transform, AfterDisplayCallback);
+                            BattlefieldManager.Instance.ShowPlayerBattleField();
+                        }
+                        else
+                        {
+                            BattlefieldManager.Instance.HidePlayerBattleField();
+                            GetComponent<CanvasGroup>().DOFade(1f, 0.3f);
+                        }
                     }
                     else
                     {
-                        GetComponent<Image>().DOFade(1f, 0.3f);
+                        CardHandManager.Instance.SetIsDraggingCard(true);
+
+                        battleCardToDrop = BattlefieldManager.Instance.GetNearestOpenEnergySpotCard(canvasPos);
+                        CardChosenDisplayController.Instance.DisplayCardChosen(cardDetailsToDisplay, battleCardToDrop.transform, AfterDisplayCallback);
                     }
                 }
                 else
                 {
-                    CardChosenDisplayController.Instance.DisplayCardChosen(cardDetailsToDisplay, AfterDisplayCallback);
+                    BattlefieldManager.Instance.HidePlayerBattleField();
                 }
                 
+                HandCardDragTool.Instance.EndDrag();
+            
                 isDragging = false;
                 isDragCardSetup = false;
                 enabled = false;
@@ -117,23 +156,28 @@ namespace HandCard_Item
 
         private void AfterDisplayCallback()
         {
+            var isEnergyCard = false;
+            battleCardToDrop.UpdateBattleCard(cardDetailsToDisplay);
+
             if (cardDetailsToDisplay.CardType == CardType.Energy)
             {
-                var card = BattlefieldManager.Instance.GetNearestOpenEnergySpotCard(HandCardDragTool.Instance.transform.position);
-                card.UpdateBattleCard(cardDetailsToDisplay);
-
+                isEnergyCard = true;
                 PlayerDataManager.Instance.AddEnergyValue(cardDetailsToDisplay.EnergyType, 1);
             }
             else
             {
-                var card = BattlefieldManager.Instance.GetNearestOpenCreatureSpotCard(HandCardDragTool.Instance.transform.position);
-                card.UpdateBattleCard(cardDetailsToDisplay);
-                
                 PlayerDataManager.Instance.UseEnergy(cardDetailsToDisplay.EnergyNeeded);
             }
             
+            CardHandManager.Instance.SetIsDraggingCard(false);
+            HandCardDragTool.Instance.EndDrag();
+            
+            isDragging = false;
+            isDragCardSetup = false;
+            enabled = false;
+            
             BattlefieldManager.Instance.HidePlayerBattleField();
-            CardHandManager.Instance.RemoveHandCard(handIndex);
+            CardHandManager.Instance.RemoveHandCard(handIndex, isEnergyCard);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Manager;
@@ -38,10 +39,14 @@ public class InitialDrawCardsController : Singleton<InitialDrawCardsController>
     private void InitDrawCards()
     {
         drawCards = CardDrawManager.Instance.DrawInitHandCards();
-        CardHandManager.Instance.InitHandCardsNeighbor(drawCards);
         
+        //add 1 temp card so hand card manager can initialize
+        drawCards.Add(drawCards[0]);
+        
+        CardHandManager.Instance.InitHandCardsNeighbor(drawCards);
+
         var listOfHand = CardHandManager.Instance.ListOfHandsCardsPool;
-        for (var i = 0; i < drawCards.Count; i++)
+        for (var i = 0; i < initDrawCards.Length; i++)
         {
             var cardItemManager = listOfHand[i];
             initDrawCards[i].InitialDrawManager.InitDrawCard(cardItemManager.HandCardManager);
@@ -55,11 +60,10 @@ public class InitialDrawCardsController : Singleton<InitialDrawCardsController>
         {
             card.InitialDrawManager.MoveToHand();
         }
-        
+
         foreach (var ui in uiToDisplay)
         {
             ui.DOFade(1f, 0.5f);
         }
     }
-
 }

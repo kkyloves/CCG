@@ -43,7 +43,7 @@ namespace Manager
             EnergyCountUI.Instance.UpdateEnergyCount(type, energyData[type].CurrentValue);
         }
         
-        public bool CanPlaceMinionCard(EnergyNeed[] energyNeeds)
+        public bool CanPlaceCreatureCard(EnergyNeed[] energyNeeds)
         {
             var canPlace = false;
             foreach (var energy in energyNeeds)

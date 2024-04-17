@@ -24,4 +24,4 @@ MonoBehaviour:
     cardNickname: Fauna Green
     cardDescription: This is Fauna Green.
   attackAmount: 4
-  defAmount: 1
+  defAmount: 8

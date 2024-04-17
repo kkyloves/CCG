@@ -43,7 +43,10 @@ namespace UI
             switch (currentPhase)
             {
                 case GamePhase.InitialDraw:
+                    CardDrawManager.Instance.SetDrawingCard(true);
                     InitialDrawCardsController.Instance.MoveToHand();
+                    CardDrawManager.Instance.FirstDrawCard();
+                    
                     currentPhase = GamePhase.Planning;
                     highlightedImages[0].DOFade(0f, 0.5f);
                     highlightedImages[1].DOFade(1f, 0.5f);
@@ -58,6 +61,12 @@ namespace UI
                     break;
 
                 case GamePhase.Planning:
+                    if (CardDrawManager.Instance.IsDrawingCards)
+                    {
+                        return;
+                    }
+                    
+                    
                     BattlefieldManager.Instance.TurnOnAttackButtons();
                     
                     currentPhase = GamePhase.Combat;
@@ -78,12 +87,16 @@ namespace UI
                     break;
 
                 case GamePhase.Discard:
-                    // CardDrawManager.Instance.DrawCard();
-                    // PlayerDataManager.Instance.ResetEnergy();
+                    if (!DiscardCardManager.Instance.CanNextPhase())
+                    {
+                        return;
+                    }
                     
+                    CardDrawManager.Instance.SetDrawingCard(true);
                     DiscardCardManager.Instance.MoveToHand();
                     BattlefieldManager.Instance.ResetBattleCards();
-                    
+                    CardHandManager.Instance.ResetDisableCards();
+
                     currentPhase = GamePhase.Planning;
                     
                     highlightedImages[3].DOFade(0f, 0.5f);

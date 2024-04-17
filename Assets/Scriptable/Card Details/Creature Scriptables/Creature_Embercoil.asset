@@ -26,4 +26,4 @@ MonoBehaviour:
     cardNickname: This is Blue Embercoil
     cardDescription: This is Emberbcoil card.
   attackAmount: 4
-  defAmount: 1
+  defAmount: 8
